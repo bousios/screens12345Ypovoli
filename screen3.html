@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">  
+    <title>screen2</title>
+
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script type="text/javascript" charset="utf-8" src="checkConnection.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+           
+            document.addEventListener("deviceready", onDeviceReady, false);
+
+            function onDeviceReady() {
+              	
+    	 		if(!navigator.onLine){alert("Δεν υπάρχει ενεργή σύνδεση δικτύου. Παρακαλώ συνδεθείτε...");}
+    	 		window.localStorage.clear();
+    	 		window.localStorage.setItem("Epafi_epitheto", "");
+    	 		window.localStorage.setItem("Epafi_onoma", "");
+                window.localStorage.setItem("Epafi_tilefono", "");
+                window.localStorage.setItem("Epafi_photo", "");
+
+                document.getElementById("searchButton").addEventListener("click", searchFunction);
+             	
+                
+            }
+
+            // onSuccess: Get a snapshot of the current contacts
+
+            function searchFunction() {
+            
+            	var pedio=document.getElementById("onoma").value;
+            	var options = new ContactFindOptions();
+                options.filter = pedio;
+                window.localStorage.setItem("Epafi_epitheto", pedio);
+                
+                options.multiple=false;
+                var fields = ["displayName", "name"];
+                
+                navigator.contacts.find(fields, onSuccess, onError, options);
+            }    
+            
+            function onSuccess(contacts){
+                
+               
+               if (contacts.length==0){
+                 if (confirm("Δεν βρέθηκε επαφή με αυτά τα στοιχεία. Θέλετε να καταχωρήσετε μια νέα επαφή ;")) {
+                     window.location="screen4.html";
+                 } else
+                   { navigator.app.exitApp();
+                   }  
+               } 
+               if (contacts.length!=0){
+               			var enimerosi=(confirm("Θέλετε να επίκαιροποιήσετε τα στοιχεία της επαφής : " +contacts[0].displayName));
+               			if (enimerosi){
+							window.localStorage.setItem("Epafi_enimerosi_epitheto", contacts[0].name.familyName);
+    	 					window.localStorage.setItem("Epafi_enimerosi_onoma", contacts[0].name.givenName);
+    	 					window.localStorage.setItem("Epafi_enimerosi_tilefono", contacts[0].phoneNumbers[0].value);
+    	 					 window.localStorage.setItem("Epafi_photo", contacts[0].photos[0].value);
+							window.localStorage.setItem("Epafi_enimerosi_true", "1");
+						
+							contacts[0].remove();
+							window.location="screen4.html";
+						}else { navigator.app.exitApp();}
+               }    
+           }
+
+			function onPickContactErr (e){
+			
+			alert("onPickContactErr");
+			
+			}
+            
+          // onError: Failed to get the contacts
+
+            function onError(contactError) {
+                alert("Προέκυψε ένα σφάλμα στην διαδικασία της αναζήτησης. Προσπαθήστε ξανά.");
+            }
+            
+         
+   
+    </script>
+    <link rel="stylesheet" type="text/css" href="styles.css" />  
+    <h1>MyContacts</h1>
+  </head>
+  <body bgcolor="#D1D4F3" >
+    	<div style="text-align:center">
+    		<h2>Αναζήτηση Επαφής</h2>
+    		<br />
+    		<input type="text" id="onoma" placeholder="Επώνυμο" />
+    		<br/> <br/> <br/>
+    		<input type="button" id="searchButton" value="Αναζήτηση"/>
+        </div>
+  </body>
+</html>

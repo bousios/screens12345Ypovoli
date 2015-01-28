@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"> 
+    <style type="text/css">
+      html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
+    </style> 
+    <title>screen2</title>
+
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyC_-Yd1QFKz__-PIC7m0UFjLUaQBR4lY28"></script>
+    <script type="text/javascript" charset="utf-8">
+    
+    	var lat=40.635403;
+      	var long=22.942929;
+      	var myContact=navigator.contacts.create();
+      	document.addEventListener("deviceready", onDeviceReady, false);
+		
+		
+		function onDeviceReady() {
+		
+		
+		var epafi_onoma=window.localStorage.getItem("Epafi_onoma");
+		var epafi_epitheto=window.localStorage.getItem("Epafi_epitheto");
+		var epafi_tilefono=window.localStorage.getItem("Epafi_tilefono");
+		var epafi_photo=window.localStorage.getItem("Epafi_photo");
+				
+		myContact.displayName=epafi_onoma+" "+epafi_epitheto;
+		myContact.nickname=epafi_onoma+" "+epafi_epitheto;
+		myContact.familyName=epafi_epitheto;
+		myContact.givenName=epafi_onoma;
+		
+		
+		var phoneNumbers=[1];
+		phoneNumbers[0]= new ContactField("mobile", epafi_tilefono, true);
+		myContact.phoneNumbers = phoneNumbers;
+		
+
+		if (window.localStorage.getItem("Epafi_photo")!="") {
+		    var photos=[1];
+		    photos[0]=new ContactField("photo", epafi_photo, true);
+		    myContact.photos=photos;
+		} 
+		
+		
+		if(!navigator.onLine){alert("Δεν υπάρχει ενεργή σύνδεση δικτύου. Παρακαλώ συνδεθείτε...");}
+		
+		entopismosThesis();
+
+		
+
+		}
+		
+      
+      	function entopismosThesis() {
+		
+			navigator.geolocation.getCurrentPosition(onPositionSuccess, onPositionError, {timeout:25000, enableHighAccuracy:true});
+
+		}
+		
+		function onPositionSuccess(position){
+		
+		lat =position.coords.latitude;
+		long =position.coords.longitude;
+		
+		showMap();	
+		}
+		
+		function onPositionError(e){
+		alert("error defining position");
+		
+		}
+      
+      
+      
+      function showMap() {
+  	  	var mapOptions = {
+      		zoom: 14,
+    		center: new google.maps.LatLng(lat, long),
+    		mapTypeControl: true,
+    		mapTypeControlOptions: {
+        	style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+        	position: google.maps.ControlPosition.BOTTOM_CENTER
+    		},
+    		zoomControl: true,
+    		zoomControlOptions: {
+        	style: google.maps.ZoomControlStyle.LARGE,
+        	position: google.maps.ControlPosition.LEFT_CENTER
+    		},
+    		scaleControl: true,
+    		streetViewControl: true,
+    		streetViewControlOptions: {
+        	position: google.maps.ControlPosition.LEFT_TOP
+    		}
+  		}
+        var map = new google.maps.Map(document.getElementById('map-canvas'),
+            mapOptions);
+            
+        var myLocation = new google.maps.LatLng(lat, long); 
+          
+    	myLocationMarker = new google.maps.Marker({
+        	title: 'This is me!',
+        	zIndex: 90,
+        	optimized: false,
+        	map:map,
+        	position: myLocation
+    	});    
+            
+    
+
+      }
+      
+      function locationSave(){
+      		
+
+		alert("Οι συντεταγμένες της θέσης μου είναι : "+lat +"  "+long);
+		myContact.note=lat+" "+long;
+		      
+      }
+      
+       function contactSave(){
+
+		myContact.save();
+		window.localStorage.clear();
+      
+      }
+	   
+    </script>
+  <button style="width:130 px; height:50px" onclick="locationSave();">Καταχώρηση Θέσης</button>
+  <button style="width:130 px; height:50px" onclick="contactSave();">Αποθήκευση Επαφής</button>
+  </head>
+  <body bgcolor="#D1D4F3">
+	<div id="map-canvas">
+		<h1>MyContacts</h1>
+  		<div class="body">Εντοπισμός Θέσης. Παρακαλώ περιμένετε....</div>
+	</div>
+
+  </body>
+</html>

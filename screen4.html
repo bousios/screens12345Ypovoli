@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">  
+    <title>screen2</title>
+
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script type="text/javascript" charset="utf-8" src="checkConnection.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+ 			var pictureSource;   // picture source
+    		var destinationType; // sets the format of returned value
+
+
+
+            // Wait for device API libraries to load
+            document.addEventListener("deviceready", onDeviceReady, false);
+
+            // device APIs are available
+            
+            
+            
+            
+
+            function onDeviceReady() {
+            	
+                if(!navigator.onLine){alert("Δεν υπάρχει ενεργή σύνδεση δικτύου. Παρακαλώ συνδεθείτε...");}
+                
+                document.getElementById("epitheto").value=window.localStorage.getItem("Epafi_epitheto");
+
+               
+                document.getElementById("saveButton").addEventListener("click", saveFunction);
+                
+                
+                var epafi_enimerosi_true=window.localStorage.getItem("Epafi_enimerosi_true");
+                if (window.localStorage.getItem("Epafi_enimerosi_true")==1){
+                	var epafi_enimerosi_onoma=window.localStorage.getItem("Epafi_enimerosi_onoma");
+                	var epafi_enimerosi_epitheto=window.localStorage.getItem("Epafi_enimerosi_epitheto");
+                	var epafi_enimerosi_tilefono=window.localStorage.getItem("Epafi_enimerosi_tilefono");
+                	
+                	document.getElementById("epitheto").value=epafi_enimerosi_epitheto;
+                	document.getElementById("onoma").value=epafi_enimerosi_onoma;
+                	document.getElementById("tilefono").value=epafi_enimerosi_tilefono;
+                
+                
+                }
+                
+                pictureSource=navigator.camera.PictureSourceType;
+        		destinationType=navigator.camera.DestinationType;
+        		
+        		
+                
+                
+            }
+
+            function saveFunction(e){
+               
+               window.localStorage.setItem("Epafi_epitheto", document.getElementById("epitheto").value);
+               window.localStorage.setItem("Epafi_onoma", document.getElementById("onoma").value);
+               window.localStorage.setItem("Epafi_tilefono", document.getElementById("tilefono").value);
+              
+               window.location="screen5.html";
+            
+            }
+            
+      
+      
+    function onPhotoDataSuccess(imageData) {
+      // Uncomment to view the base64-encoded image data
+      // console.log(imageData);
+
+      // Get image handle
+      //
+      var smallImage = document.getElementById('smallImage');
+      window.localStorage.setItem("Epafi_photo", imageData);
+
+      // Unhide image elements
+      //
+      smallImage.style.display = 'block';
+
+      // Show the captured photo
+      // The in-line CSS rules are used to resize the image
+      //
+      smallImage.src =imageData;
+    }
+    
+        function onFail(message) {
+      alert('Failed because: ' + message);
+    }
+            
+            
+            function capturePhoto() {
+      // Take picture using device camera and retrieve image as base64-encoded string
+      navigator.camera.getPicture(onPhotoDataSuccess, onFail, { quality: 50});
+
+    
+    }
+
+   
+    </script>
+    <link rel="stylesheet" type="text/css" href="styles.css" />  
+    <h1>MyContacts</h1>
+  </head>
+  <body bgcolor="#D1D4F3" >
+    	<div style="text-align:center">
+    		<h2>Καταχώρηση Στοιχείων Επαφής</h2>
+    		<br />
+    		<input type="text" id="epitheto" placeholder="Επώνυμο" />
+    		<br/><br/>
+    		<input type="text" id="onoma" placeholder="Όνομα" />
+    		<br/><br/>
+    		 <input type="tel" id="tilefono" placeholder="Τηλέφωνο" />
+    		<br/><br/>
+    		<button style="width:120 px; height:50px" onclick="capturePhoto();">Φωτογραφία</button>
+    		<br/><br/>
+    		<input type="button" id="saveButton" value="Καταχώρηση"/>
+		</div>
+  </body>
+</html>
